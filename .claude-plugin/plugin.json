@@ -1,0 +1,21 @@
+{
+  "name": "bash-lsp-plugin",
+  "version": "1.0.0",
+  "description": "LSP integration for Bash/Shell scripts with ShellCheck linting and custom style enforcement",
+  "author": {
+    "name": "arbal",
+    "email": "arbal@users.noreply.github.com"
+  },
+  "homepage": "https://github.com/arbal/bash-lsp-plugin",
+  "repository": "https://github.com/arbal/bash-lsp-plugin",
+  "license": "MIT",
+  "keywords": [
+    "bash",
+    "shell",
+    "lsp",
+    "shellcheck",
+    "code-intelligence",
+    "scripting",
+    "language-server"
+  ]
+}

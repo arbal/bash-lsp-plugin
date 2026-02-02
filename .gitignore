@@ -1,0 +1,31 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+debug.log
+
+# Cache
+.cache/
+node_modules/
+
+# Test outputs
+tests/*.out
+tests/*.log
+test-output/
+*.test.txt
+
+# Personal/temporary files
+.env
+.env.local
+
+# Don't commit extended example (users should use .lsp.json)
+.lsp.json.extended-example
