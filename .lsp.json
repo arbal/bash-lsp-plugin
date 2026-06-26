@@ -10,16 +10,22 @@
       ".bash_login": "bash",
       ".bash_logout": "bash",
       ".profile": "bash",
-      ".zsh": "bash",
-      ".zshrc": "bash"
+      ".command": "bash"
     },
     "initializationOptions": {
-      "shellcheckPath": "/usr/bin/shellcheck",
-      "highlightParsingErrors": true
-    },
-    "startupTimeout": 5000,
-    "shutdownTimeout": 2000,
-    "restartOnCrash": true,
-    "maxRestarts": 3
+      "enableSourceErrorDiagnostics": true,
+      "globPattern": "**/*@(.sh|.inc|.bash|.bashrc|.bash_profile|.bash_login|.bash_logout|.profile|.command)",
+      "shellcheckArguments": [
+        "--rcfile",
+        "${CLAUDE_PLUGIN_ROOT}/.shellcheckrc"
+      ],
+      "shellcheckExternalSources": true,
+      "shellcheckPath": "shellcheck",
+      "shfmt": {
+        "ignoreEditorconfig": true,
+        "languageDialect": "bash",
+        "path": "shfmt"
+      }
+    }
   }
 }

@@ -12,8 +12,8 @@ bash-language-server --version
 # Expected: 5.6.0 or newer
 
 # 2. Check if it's in PATH
-which bash-language-server
-# Expected: /usr/bin/bash-language-server or similar
+command -v bash-language-server
+# Expected: a PATH-resolved executable
 
 # 3. Check ShellCheck (optional but recommended)
 shellcheck --version
@@ -332,6 +332,82 @@ grep "Received response 'initialize'" ~/.claude/debug/latest
 - Reduce number of `.sh` files in workspace
 - Check system load: `uptime`, `iostat`, `procs --sortd cpu`
 
+### Issue 7: Plugin counts as "1 LSP server" but the LSP tool never appears / no diagnostics
+
+**Symptoms:**
+- `/reload-plugins` reports `1 plugin LSP server`
+- No `LSP` tool available in the session
+- No `<new-diagnostics>` block appears after editing `.sh` files
+- Debug log: `LSP manager initialized with 0 servers`
+
+**Current behavior (Claude Code 2.1.193):**
+
+The plugin loads successfully when the manifest points at the plugin root and the `.lsp.json` file uses currently supported fields. If the LSP tool still does not appear, the problem is usually one of:
+
+- stale absolute paths for `bash-language-server`, `shellcheck`, or `shfmt`
+- a malformed `.lsp.json`
+- a disabled plugin or marketplace entry
+- a ShellCheck rcfile path that does not resolve from the plugin root
+- a shell script file type that is not mapped in `extensionToLanguage`
+
+**Diagnosis:**
+
+```bash
+grep -i 'ERROR.*LSP\|not yet implemented\|LSP manager initialized' ~/.claude/debug/latest
+```
+
+If you see `initialized with 0 servers` or a path-resolution error, treat the LSP config as the failure point.
+
+**Fix:**
+
+Use only these fields in `.lsp.json`:
+
+```json
+{
+  "bash": {
+    "command": "bash-language-server",
+    "args": ["start"],
+    "extensionToLanguage": {
+      ".sh": "bash",
+      ".bash": "bash",
+      ".bashrc": "bash",
+      ".bash_profile": "bash",
+      ".bash_login": "bash",
+      ".bash_logout": "bash",
+      ".profile": "bash",
+      ".command": "bash"
+    },
+    "initializationOptions": {
+      "enableSourceErrorDiagnostics": true,
+      "globPattern": "**/*@(.sh|.inc|.bash|.bashrc|.bash_profile|.bash_login|.bash_logout|.profile|.command)",
+      "shellcheckArguments": [
+        "--rcfile",
+        "${CLAUDE_PLUGIN_ROOT}/.shellcheckrc"
+      ],
+      "shellcheckExternalSources": true,
+      "shellcheckPath": "shellcheck",
+      "shfmt": {
+        "ignoreEditorconfig": true,
+        "languageDialect": "bash",
+        "path": "shfmt"
+      }
+    }
+  }
+}
+```
+
+Use PATH-resolved commands unless a live test proves a fixed path is required. After saving, run:
+
+```bash
+claude plugins validate ./.claude-plugin/plugin.json --strict
+claude plugins validate ./.claude-plugin/marketplace.json --strict
+claude --plugin-dir /path/to/bash-lsp-plugin plugins details bash-lsp-plugin
+```
+
+Then verify that editing a supported shell file produces a `<new-diagnostics>` block.
+
+**Important:** `/reload-plugins` showing `1 plugin LSP server` only means the config was registered — not that initialization succeeded. Always verify with the LSP tool or debug log.
+
 ## Testing Your Setup
 
 Use the included test files to verify LSP functionality:
@@ -419,7 +495,9 @@ Add to `.lsp.json` for verbose logging:
     "command": "bash-language-server",
     "args": ["start", "--log-level", "trace"],
     "extensionToLanguage": {
-      ".sh": "bash"
+      ".sh": "bash",
+      ".bash": "bash",
+      ".bashrc": "bash"
     }
   }
 }
@@ -452,7 +530,7 @@ done
 cat << 'EOF' | bash-language-server start
 Content-Length: 187
 
-{"jsonrpc":"2.0","id":0,"method":"initialize","params":{"processId":null,"rootUri":"file:///tmp","capabilities":{},"initializationOptions":{"shellcheckPath":"/usr/bin/shellcheck"}}}
+{"jsonrpc":"2.0","id":0,"method":"initialize","params":{"processId":null,"rootUri":"file:///tmp","capabilities":{},"initializationOptions":{"shellcheckPath":"shellcheck"}}}
 EOF
 ```
 
@@ -465,7 +543,7 @@ If issues persist after trying these solutions:
 1. **Gather diagnostic info:**
    ```bash
    bash-language-server --version
-   which bash-language-server
+   command -v bash-language-server
    node --version
    shellcheck --version
    procs -t bash-language-server > lsp-process-tree.txt

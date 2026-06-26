@@ -16,12 +16,18 @@ debug.log
 # Cache
 .cache/
 node_modules/
+.claude/
 
 # Test outputs
 tests/*.out
 tests/*.log
 test-output/
 *.test.txt
+digest.txt
+*.bundle
+*.patch
+*.sha256
+*.tar.gz
 
 # Personal/temporary files
 .env

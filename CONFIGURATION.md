@@ -53,7 +53,14 @@ source-path=SCRIPTDIR:../lib
     "command": "bash-language-server",
     "args": ["start"],
     "extensionToLanguage": {
-      ".sh": "bash"
+      ".sh": "bash",
+      ".bash": "bash",
+      ".bashrc": "bash",
+      ".bash_profile": "bash",
+      ".bash_login": "bash",
+      ".bash_logout": "bash",
+      ".profile": "bash",
+      ".command": "bash"
     }
   }
 }
@@ -71,18 +78,25 @@ source-path=SCRIPTDIR:../lib
       ".bash": "bash",
       ".bashrc": "bash",
       ".bash_profile": "bash",
-      ".bash_logout": "bash"
+      ".bash_login": "bash",
+      ".bash_logout": "bash",
+      ".profile": "bash",
+      ".command": "bash"
     },
     "initializationOptions": {
-      "shellcheckPath": "/usr/bin/shellcheck",
+      "enableSourceErrorDiagnostics": true,
+      "globPattern": "**/*@(.sh|.inc|.bash|.bashrc|.bash_profile|.bash_login|.bash_logout|.profile|.command)",
       "shellcheckArguments": [
-        "--exclude=SC2034,SC2086",
-        "--shell=bash",
-        "--external-sources"
+        "--rcfile",
+        "${CLAUDE_PLUGIN_ROOT}/.shellcheckrc"
       ],
-      "highlightParsingErrors": true,
-      "globPattern": "**/*@(.sh|.bash|.command)",
-      "explainshellEndpoint": ""
+      "shellcheckExternalSources": true,
+      "shellcheckPath": "shellcheck",
+      "shfmt": {
+        "ignoreEditorconfig": true,
+        "languageDialect": "bash",
+        "path": "shfmt"
+      }
     }
   }
 }
@@ -90,16 +104,24 @@ source-path=SCRIPTDIR:../lib
 
 **Available Options:**
 
-- **shellcheckPath** - Absolute path to shellcheck binary
+- **enableSourceErrorDiagnostics** - Show parse errors discovered while resolving sourced files
+- **globPattern** - File patterns to analyze across the workspace
 - **shellcheckArguments** - Array of arguments passed to shellcheck
+  - `--rcfile=/path/to/.shellcheckrc` - Prefer the bundled project rcfile
   - `--exclude=CODE1,CODE2` - Disable specific checks
   - `--shell=bash|sh|dash|ksh` - Set shell dialect
   - `--external-sources` - Follow sourced files
-  - `--source-path=DIR` - Where to look for sources
-  - `--severity=error|warning|info|style` - Minimum severity
-- **highlightParsingErrors** - Show syntax errors (default: true)
-- **globPattern** - File patterns to analyze
-- **explainshellEndpoint** - URL for shell command explanations (leave empty to disable)
+- **shellcheckExternalSources** - Enable or disable `--external-sources`
+- **shellcheckPath** - ShellCheck binary name or absolute path
+- **shfmt.path** - shfmt binary name or absolute path
+- **shfmt.ignoreEditorconfig** - Ignore `.editorconfig` shfmt settings
+- **shfmt.languageDialect** - shfmt dialect (`auto`, `bash`, `posix`, `mksh`, `bats`)
+- **shfmt.binaryNextLine** - Allow `&&` and `||` to start a line
+- **shfmt.caseIndent** - Indent `case` patterns
+- **shfmt.funcNextLine** - Put function braces on the next line
+- **shfmt.keepPadding** - Preserve alignment padding
+- **shfmt.simplifyCode** - Enable simplification transforms
+- **shfmt.spaceRedirects** - Add spaces after redirection operators
 
 ### 3. Per-File Directives
 
@@ -179,7 +201,7 @@ ShellCheck checks these locations in order (first found wins):
 4. **Home directory** (`~/.shellcheckrc`)
 5. **XDG config** (`$XDG_CONFIG_HOME/shellcheck/shellcheckrc`)
 
-bash-language-server respects this priority automatically.
+bash-language-server respects this priority automatically unless you pass an explicit `--rcfile` in `.lsp.json`, which makes the bundled plugin rcfile win.
 
 ## Common Configuration Patterns
 
@@ -254,17 +276,18 @@ cd ~/bash-lsp-plugin
 shellcheck demo-live.sh
 
 # Check which config file is used
-shellcheck --version  # Shows config search paths
+shellcheck --help | sed -n '1,80p'
 ```
 
 ### Verify LSP Integration
 
 ```bash
-# Start Claude Code in debug mode
-claude --debug --plugin-dir ~/bash-lsp-plugin
+# Validate the plugin and marketplace manifests
+claude plugins validate ./.claude-plugin/plugin.json --strict
+claude plugins validate ./.claude-plugin/marketplace.json --strict
 
-# Check debug log for initialization options
-grep "initializationOptions" ~/.claude/debug/latest
+# Inspect the loaded plugin
+claude --plugin-dir ~/bash-lsp-plugin plugins details bash-lsp-plugin
 ```
 
 ### Test Specific Rules
