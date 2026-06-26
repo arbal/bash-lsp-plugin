@@ -283,8 +283,8 @@ shellcheck --help | sed -n '1,80p'
 
 ```bash
 # Validate the plugin and marketplace manifests
-claude plugins validate ./.claude-plugin/plugin.json --strict
-claude plugins validate ./.claude-plugin/marketplace.json --strict
+claude plugin validate ./.claude-plugin/plugin.json --strict
+claude plugin validate ./.claude-plugin/marketplace.json --strict
 
 # Inspect the loaded plugin
 claude --plugin-dir ~/bash-lsp-plugin plugins details bash-lsp-plugin

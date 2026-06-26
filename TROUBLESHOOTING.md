@@ -399,8 +399,8 @@ Use only these fields in `.lsp.json`:
 Use PATH-resolved commands unless a live test proves a fixed path is required. After saving, run:
 
 ```bash
-claude plugins validate ./.claude-plugin/plugin.json --strict
-claude plugins validate ./.claude-plugin/marketplace.json --strict
+claude plugin validate ./.claude-plugin/plugin.json --strict
+claude plugin validate ./.claude-plugin/marketplace.json --strict
 claude --plugin-dir /path/to/bash-lsp-plugin plugins details bash-lsp-plugin
 ```
 
@@ -601,6 +601,6 @@ Your plugin is working correctly when:
 ---
 
 **Last Updated:** 2026-02-02
-**Plugin Version:** 1.0.0
+**Plugin Version:** 1.1.0
 **bash-language-server Version:** 5.6.0+
 **Claude Code Version:** 2.1.29+

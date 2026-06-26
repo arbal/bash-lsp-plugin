@@ -19,7 +19,7 @@ claude plugins marketplace add /path/to/bash-lsp-plugin
 claude plugins install bash-lsp-plugin@bash-lsp-plugin-marketplace
 
 # 3. Open a bash script
-# LSP will provide diagnostics, navigation, and on-demand formatting
+# LSP will provide diagnostics and navigation; formatting is available when the client requests it
 ```
 
 **See [Prerequisites](#prerequisites) for alternative installation methods.**
@@ -34,7 +34,7 @@ The bash-language-server provides intelligent code assistance for Bash scripts:
 - **Variable Tracking** - Detection of undefined or unused variables
 - **ShellCheck Integration** - Linting and best practice suggestions
 - **Hover Documentation** - Inline documentation for commands
-- **Code Formatting** - On-demand `shfmt` formatting
+- **Code Formatting** - `shfmt` support when the LSP client requests document formatting
 - **Symbol Search** - Find functions and variables across files
 
 ## Supported File Extensions
@@ -158,7 +158,7 @@ See **[CONFIGURATION.md](CONFIGURATION.md)** for details on customizing ShellChe
   "name": "bash-lsp-plugin",
   "displayName": "Bash LSP Plugin",
   "description": "Claude Code Bash/Shell LSP integration with ShellCheck linting and shfmt formatting",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": {
     "name": "arbal"
   }
@@ -225,7 +225,7 @@ The plugin includes comprehensive test files to verify LSP functionality:
 
 1. Run `scripts/validate.sh`
 2. Open any supported shell file in Claude Code
-3. The LSP should start and provide diagnostics, navigation, and formatting on demand
+3. The LSP should start and provide diagnostics and navigation; formatting is available when requested by the client
 
 ### Expected LSP Diagnostics
 

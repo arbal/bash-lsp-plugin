@@ -5,8 +5,8 @@ repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 plugin_manifest="${repo_root}/.claude-plugin/plugin.json"
 marketplace_manifest="${repo_root}/.claude-plugin/marketplace.json"
 
-claude plugins validate "${plugin_manifest}" --strict
-claude plugins validate "${marketplace_manifest}" --strict
+claude plugin validate "${plugin_manifest}" --strict
+claude plugin validate "${marketplace_manifest}" --strict
 
 valid_scripts=(
 	"${repo_root}/test.sh"

@@ -25,8 +25,8 @@ Applies to: public GitHub release workflow for `bash-lsp-plugin`.
 
 ## Local Validation
 
-- `claude plugins validate ./.claude-plugin/plugin.json --strict`
-- `claude plugins validate ./.claude-plugin/marketplace.json --strict`
+- `claude plugin validate ./.claude-plugin/plugin.json --strict`
+- `claude plugin validate ./.claude-plugin/marketplace.json --strict`
 - `scripts/validate.sh`
 - `claude --plugin-dir /root/claude-plugin-bash-lsp plugins details bash-lsp-plugin`
 
