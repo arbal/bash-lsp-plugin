@@ -43,10 +43,6 @@ The bash-language-server provides intelligent code assistance for Bash scripts:
 - `.bash` - Bash scripts
 - `.bashrc` - Interactive Bash startup file
 - `.bash_profile` - Login Bash startup file
-- `.bash_login` - Login Bash startup file
-- `.bash_logout` - Logout Bash hook
-- `.profile` - POSIX shell startup file
-- `.command` - Shell scripts commonly used on macOS
 
 Files with `zsh` or `ksh` extensions are intentionally not claimed here.
 
@@ -175,15 +171,11 @@ See **[CONFIGURATION.md](CONFIGURATION.md)** for details on customizing ShellChe
       ".sh": "bash",
       ".bash": "bash",
       ".bashrc": "bash",
-      ".bash_profile": "bash",
-      ".bash_login": "bash",
-      ".bash_logout": "bash",
-      ".profile": "bash",
-      ".command": "bash"
+      ".bash_profile": "bash"
     },
     "initializationOptions": {
       "enableSourceErrorDiagnostics": true,
-      "globPattern": "**/*@(.sh|.inc|.bash|.bashrc|.bash_profile|.bash_login|.bash_logout|.profile|.command)",
+      "globPattern": "**/*@(.sh|.inc|.bash|.bashrc|.bash_profile)",
       "shellcheckArguments": [
         "--rcfile",
         "${CLAUDE_PLUGIN_ROOT}/.shellcheckrc"
@@ -326,15 +318,11 @@ The bash-language-server supports additional configuration through `.lsp.json`. 
       ".sh": "bash",
       ".bash": "bash",
       ".bashrc": "bash",
-      ".bash_profile": "bash",
-      ".bash_login": "bash",
-      ".bash_logout": "bash",
-      ".profile": "bash",
-      ".command": "bash"
+      ".bash_profile": "bash"
     },
     "initializationOptions": {
       "enableSourceErrorDiagnostics": true,
-      "globPattern": "**/*@(.sh|.inc|.bash|.bashrc|.bash_profile|.bash_login|.bash_logout|.profile|.command)",
+      "globPattern": "**/*@(.sh|.inc|.bash|.bashrc|.bash_profile)",
       "shellcheckArguments": [
         "--rcfile",
         "${CLAUDE_PLUGIN_ROOT}/.shellcheckrc"

@@ -4,9 +4,28 @@ set -euo pipefail
 repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 plugin_manifest="${repo_root}/.claude-plugin/plugin.json"
 marketplace_manifest="${repo_root}/.claude-plugin/marketplace.json"
+lsp_manifest="${repo_root}/.lsp.json"
 
 claude plugin validate "${plugin_manifest}" --strict
 claude plugin validate "${marketplace_manifest}" --strict
+
+expected_extensions=$'.bash\n.bash_profile\n.bashrc\n.sh'
+actual_extensions=$(
+	jq -r '.bash.extensionToLanguage | keys_unsorted[]' "${lsp_manifest}" | sort
+)
+if [[ "${actual_extensions}" != "${expected_extensions}" ]]; then
+	printf 'Unexpected .lsp.json extension set:\nexpected:\n%s\nactual:\n%s\n' \
+		"${expected_extensions}" "${actual_extensions}" >&2
+	exit 1
+fi
+
+expected_glob='**/*@(.sh|.inc|.bash|.bashrc|.bash_profile)'
+actual_glob=$(jq -r '.bash.initializationOptions.globPattern' "${lsp_manifest}")
+if [[ "${actual_glob}" != "${expected_glob}" ]]; then
+	printf 'Unexpected .lsp.json globPattern:\nexpected: %s\nactual:   %s\n' \
+		"${expected_glob}" "${actual_glob}" >&2
+	exit 1
+fi
 
 valid_scripts=(
 	"${repo_root}/test.sh"

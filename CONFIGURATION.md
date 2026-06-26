@@ -56,11 +56,7 @@ source-path=SCRIPTDIR:../lib
       ".sh": "bash",
       ".bash": "bash",
       ".bashrc": "bash",
-      ".bash_profile": "bash",
-      ".bash_login": "bash",
-      ".bash_logout": "bash",
-      ".profile": "bash",
-      ".command": "bash"
+      ".bash_profile": "bash"
     }
   }
 }
@@ -77,15 +73,11 @@ source-path=SCRIPTDIR:../lib
       ".sh": "bash",
       ".bash": "bash",
       ".bashrc": "bash",
-      ".bash_profile": "bash",
-      ".bash_login": "bash",
-      ".bash_logout": "bash",
-      ".profile": "bash",
-      ".command": "bash"
+      ".bash_profile": "bash"
     },
     "initializationOptions": {
       "enableSourceErrorDiagnostics": true,
-      "globPattern": "**/*@(.sh|.inc|.bash|.bashrc|.bash_profile|.bash_login|.bash_logout|.profile|.command)",
+      "globPattern": "**/*@(.sh|.inc|.bash|.bashrc|.bash_profile)",
       "shellcheckArguments": [
         "--rcfile",
         "${CLAUDE_PLUGIN_ROOT}/.shellcheckrc"
