@@ -11,7 +11,7 @@ Applies to: public GitHub release workflow for `bash-lsp-plugin`.
 
 ## Preflight
 
-1. Verify the repo path is `/root/claude-plugin-bash-lsp`.
+1. Verify the repo path is `/path/to/bash-lsp-plugin`.
 2. Confirm the release branch is `release/v1.1.0`.
 3. Ensure the worktree is clean or every remaining path is explained.
 4. Run `scripts/validate.sh`.
@@ -28,7 +28,7 @@ Applies to: public GitHub release workflow for `bash-lsp-plugin`.
 - `claude plugin validate ./.claude-plugin/plugin.json --strict`
 - `claude plugin validate ./.claude-plugin/marketplace.json --strict`
 - `scripts/validate.sh`
-- `claude --plugin-dir /root/claude-plugin-bash-lsp plugins details bash-lsp-plugin`
+- `claude --plugin-dir /path/to/bash-lsp-plugin plugins details bash-lsp-plugin`
 
 ## Local Deployment
 
@@ -43,7 +43,7 @@ Applies to: public GitHub release workflow for `bash-lsp-plugin`.
 The only approved push target for this release candidate is:
 
 ```bash
-git -C /root/claude-plugin-bash-lsp push -u origin release/v1.1.0
+git -C /path/to/bash-lsp-plugin push -u origin release/v1.1.0
 ```
 
 Do not run that command until the user explicitly approves it.
