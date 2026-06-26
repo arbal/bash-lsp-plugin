@@ -38,6 +38,14 @@ Applies to: public GitHub release workflow for `bash-lsp-plugin`.
 4. Keep the old `bash-lsp-plugin@user` state available until the replacement is proven.
 5. Record the rollback command before replacing anything.
 
+## CI Decision
+
+CI is deferred for this release candidate.
+
+- The repository's local validation path relies on the Claude Code CLI being available on the machine running the checks.
+- A reusable CI job would need a supported, non-secret bootstrap for that CLI or a narrower validation split that does not pretend to cover the full local release gate.
+- Until that path is standardized, the release process stays local-first and the repository documents the same `scripts/validate.sh` entry point for manual use.
+
 ## Push Approval Gate
 
 The only approved push target for this release candidate is:
