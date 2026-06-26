@@ -41,10 +41,9 @@ The bash-language-server provides intelligent code assistance for Bash scripts:
 
 - `.sh` - Shell scripts
 - `.bash` - Bash scripts
-- `.bashrc` - Interactive Bash startup file
-- `.bash_profile` - Login Bash startup file
-
-Files with `zsh` or `ksh` extensions are intentionally not claimed here.
+Files with `zsh` or `ksh` extensions are intentionally not claimed here, and
+hidden Bash startup files or `.command` files are not advertised in this
+release because Claude Code did not route them consistently in live tests.
 
 ## Prerequisites
 
@@ -169,13 +168,11 @@ See **[CONFIGURATION.md](CONFIGURATION.md)** for details on customizing ShellChe
     "args": ["start"],
     "extensionToLanguage": {
       ".sh": "bash",
-      ".bash": "bash",
-      ".bashrc": "bash",
-      ".bash_profile": "bash"
+      ".bash": "bash"
     },
     "initializationOptions": {
       "enableSourceErrorDiagnostics": true,
-      "globPattern": "**/*@(.sh|.inc|.bash|.bashrc|.bash_profile)",
+      "globPattern": "**/*@(.sh|.inc|.bash)",
       "shellcheckArguments": [
         "--rcfile",
         "${CLAUDE_PLUGIN_ROOT}/.shellcheckrc"
@@ -316,13 +313,11 @@ The bash-language-server supports additional configuration through `.lsp.json`. 
     "args": ["start"],
     "extensionToLanguage": {
       ".sh": "bash",
-      ".bash": "bash",
-      ".bashrc": "bash",
-      ".bash_profile": "bash"
+      ".bash": "bash"
     },
     "initializationOptions": {
       "enableSourceErrorDiagnostics": true,
-      "globPattern": "**/*@(.sh|.inc|.bash|.bashrc|.bash_profile)",
+      "globPattern": "**/*@(.sh|.inc|.bash)",
       "shellcheckArguments": [
         "--rcfile",
         "${CLAUDE_PLUGIN_ROOT}/.shellcheckrc"

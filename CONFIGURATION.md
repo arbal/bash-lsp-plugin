@@ -54,9 +54,7 @@ source-path=SCRIPTDIR:../lib
     "args": ["start"],
     "extensionToLanguage": {
       ".sh": "bash",
-      ".bash": "bash",
-      ".bashrc": "bash",
-      ".bash_profile": "bash"
+      ".bash": "bash"
     }
   }
 }
@@ -71,13 +69,11 @@ source-path=SCRIPTDIR:../lib
     "args": ["start"],
     "extensionToLanguage": {
       ".sh": "bash",
-      ".bash": "bash",
-      ".bashrc": "bash",
-      ".bash_profile": "bash"
+      ".bash": "bash"
     },
     "initializationOptions": {
       "enableSourceErrorDiagnostics": true,
-      "globPattern": "**/*@(.sh|.inc|.bash|.bashrc|.bash_profile)",
+      "globPattern": "**/*@(.sh|.inc|.bash)",
       "shellcheckArguments": [
         "--rcfile",
         "${CLAUDE_PLUGIN_ROOT}/.shellcheckrc"

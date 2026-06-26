@@ -9,7 +9,7 @@ lsp_manifest="${repo_root}/.lsp.json"
 claude plugin validate "${plugin_manifest}" --strict
 claude plugin validate "${marketplace_manifest}" --strict
 
-expected_extensions=$'.bash\n.bash_profile\n.bashrc\n.sh'
+expected_extensions=$'.bash\n.sh'
 actual_extensions=$(
 	jq -r '.bash.extensionToLanguage | keys_unsorted[]' "${lsp_manifest}" | sort
 )
@@ -19,7 +19,7 @@ if [[ "${actual_extensions}" != "${expected_extensions}" ]]; then
 	exit 1
 fi
 
-expected_glob='**/*@(.sh|.inc|.bash|.bashrc|.bash_profile)'
+expected_glob='**/*@(.sh|.inc|.bash)'
 actual_glob=$(jq -r '.bash.initializationOptions.globPattern' "${lsp_manifest}")
 if [[ "${actual_glob}" != "${expected_glob}" ]]; then
 	printf 'Unexpected .lsp.json globPattern:\nexpected: %s\nactual:   %s\n' \
