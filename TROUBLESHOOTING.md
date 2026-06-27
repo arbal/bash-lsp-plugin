@@ -371,20 +371,13 @@ Use only these fields in `.lsp.json`:
       ".sh": "bash",
       ".bash": "bash"
     },
-    "initializationOptions": {
-      "enableSourceErrorDiagnostics": true,
-      "globPattern": "**/*@(.sh|.inc|.bash)",
-      "shellcheckArguments": [
-        "--rcfile",
-        "${CLAUDE_PLUGIN_ROOT}/.shellcheckrc"
-      ],
-      "shellcheckExternalSources": true,
-      "shellcheckPath": "shellcheck",
-      "shfmt": {
-        "ignoreEditorconfig": true,
-        "languageDialect": "bash",
-        "path": "shfmt"
-      }
+    "env": {
+      "GLOB_PATTERN": "**/*@(.sh|.bash)",
+      "SHELLCHECK_ARGUMENTS": "--rcfile ${CLAUDE_PLUGIN_ROOT}/.shellcheckrc",
+      "SHELLCHECK_PATH": "shellcheck",
+      "SHFMT_IGNORE_EDITORCONFIG": "false",
+      "SHFMT_LANGUAGE_DIALECT": "auto",
+      "SHFMT_PATH": "shfmt"
     }
   }
 }

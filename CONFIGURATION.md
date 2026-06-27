@@ -45,6 +45,11 @@ source-path=SCRIPTDIR:../lib
 
 **Format:** JSON configuration
 
+bash-language-server 5.6.0 reads its runtime policy from process environment
+variables. The Claude Code plugin forwards those values from `.lsp.json.env`,
+so the manifest keeps the server launch portable while still using the bundled
+ShellCheck rcfile and shfmt policy.
+
 #### Basic Configuration (Current)
 
 ```json
@@ -55,61 +60,38 @@ source-path=SCRIPTDIR:../lib
     "extensionToLanguage": {
       ".sh": "bash",
       ".bash": "bash"
-    }
-  }
-}
-```
-
-#### Extended Configuration (With Style Options)
-
-```json
-{
-  "bash": {
-    "command": "bash-language-server",
-    "args": ["start"],
-    "extensionToLanguage": {
-      ".sh": "bash",
-      ".bash": "bash"
     },
-    "initializationOptions": {
-      "enableSourceErrorDiagnostics": true,
-      "globPattern": "**/*@(.sh|.inc|.bash)",
-      "shellcheckArguments": [
-        "--rcfile",
-        "${CLAUDE_PLUGIN_ROOT}/.shellcheckrc"
-      ],
-      "shellcheckExternalSources": true,
-      "shellcheckPath": "shellcheck",
-      "shfmt": {
-        "ignoreEditorconfig": true,
-        "languageDialect": "bash",
-        "path": "shfmt"
-      }
+    "env": {
+      "GLOB_PATTERN": "**/*@(.sh|.bash)",
+      "SHELLCHECK_ARGUMENTS": "--rcfile ${CLAUDE_PLUGIN_ROOT}/.shellcheckrc",
+      "SHELLCHECK_PATH": "shellcheck",
+      "SHFMT_IGNORE_EDITORCONFIG": "false",
+      "SHFMT_LANGUAGE_DIALECT": "auto",
+      "SHFMT_PATH": "shfmt"
     }
   }
 }
 ```
 
-**Available Options:**
+**Active Bash IDE Settings:**
 
-- **enableSourceErrorDiagnostics** - Show parse errors discovered while resolving sourced files
-- **globPattern** - File patterns to analyze across the workspace
-- **shellcheckArguments** - Array of arguments passed to shellcheck
-  - `--rcfile=/path/to/.shellcheckrc` - Prefer the bundled project rcfile
-  - `--exclude=CODE1,CODE2` - Disable specific checks
-  - `--shell=bash|sh|dash|ksh` - Set shell dialect
-  - `--external-sources` - Follow sourced files
-- **shellcheckExternalSources** - Enable or disable `--external-sources`
-- **shellcheckPath** - ShellCheck binary name or absolute path
-- **shfmt.path** - shfmt binary name or absolute path
-- **shfmt.ignoreEditorconfig** - Ignore `.editorconfig` shfmt settings
-- **shfmt.languageDialect** - shfmt dialect (`auto`, `bash`, `posix`, `mksh`, `bats`)
-- **shfmt.binaryNextLine** - Allow `&&` and `||` to start a line
-- **shfmt.caseIndent** - Indent `case` patterns
-- **shfmt.funcNextLine** - Put function braces on the next line
-- **shfmt.keepPadding** - Preserve alignment padding
-- **shfmt.simplifyCode** - Enable simplification transforms
-- **shfmt.spaceRedirects** - Add spaces after redirection operators
+- **GLOB_PATTERN** - `**/*@(.sh|.bash)` for workspace background analysis only
+- **SHELLCHECK_ARGUMENTS** - `--rcfile ${CLAUDE_PLUGIN_ROOT}/.shellcheckrc`
+- **SHELLCHECK_PATH** - `shellcheck` resolved from `PATH`
+- **SHFMT_PATH** - `shfmt` resolved from `PATH`
+- **SHFMT_IGNORE_EDITORCONFIG** - `false`, so project `.editorconfig` remains
+  authoritative when shfmt runs
+- **SHFMT_LANGUAGE_DIALECT** - `auto`, so shfmt can choose the dialect from the
+  file context where supported
+
+**Behavior Notes:**
+
+- Bash language-server 5.6.0 adds `--external-sources` itself when ShellCheck
+  linting is enabled, so this repository does not duplicate that flag in the
+  manifest.
+- The bundled `.shellcheckrc` is the source of the optional policy checks.
+- Claude Code diagnostics and navigation are claimed only for `.sh` and
+  `.bash` files in this release.
 
 ### 3. Per-File Directives
 
@@ -243,12 +225,8 @@ source-path=SCRIPTDIR:./lib:../common
     "extensionToLanguage": {
       ".sh": "bash"
     },
-    "initializationOptions": {
-      "shellcheckArguments": [
-        "--severity=error",
-        "--shell=bash",
-        "--norc"
-      ]
+    "env": {
+      "SHELLCHECK_ARGUMENTS": "--severity=error --shell=bash --norc"
     }
   }
 }

@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Removed stale absolute paths and unsupported LSP configuration fields
 - Wired ShellCheck to the bundled `.shellcheckrc` through `--rcfile`
+- Moved Bash LSP runtime policy into `.lsp.json.env` so bash-language-server 5.6.0 receives ShellCheck and shfmt settings
 - Marked fixture/demo scripts and validation docs to avoid accidental destructive execution
 
 ## [1.0.0] - 2026-02-02

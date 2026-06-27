@@ -21,6 +21,8 @@ Applies to: public GitHub release workflow for `bash-lsp-plugin`.
 
 - The plugin version lives in `.claude-plugin/plugin.json`.
 - The marketplace entry should reference the plugin root and avoid duplicating the version source.
+- The Bash LSP runtime policy lives in `.lsp.json.env`, which forwards the
+  bundled ShellCheck rcfile and shfmt policy into bash-language-server 5.6.0.
 - Bump to `1.1.0` only after all validation passes.
 
 ## Local Validation
@@ -29,6 +31,7 @@ Applies to: public GitHub release workflow for `bash-lsp-plugin`.
 - `claude plugin validate ./.claude-plugin/marketplace.json --strict`
 - `scripts/validate.sh`
 - `claude --plugin-dir /path/to/bash-lsp-plugin plugins details bash-lsp-plugin`
+- `git diff --check origin/main...HEAD`
 
 ## Local Deployment
 

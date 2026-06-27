@@ -170,24 +170,22 @@ See **[CONFIGURATION.md](CONFIGURATION.md)** for details on customizing ShellChe
       ".sh": "bash",
       ".bash": "bash"
     },
-    "initializationOptions": {
-      "enableSourceErrorDiagnostics": true,
-      "globPattern": "**/*@(.sh|.inc|.bash)",
-      "shellcheckArguments": [
-        "--rcfile",
-        "${CLAUDE_PLUGIN_ROOT}/.shellcheckrc"
-      ],
-      "shellcheckExternalSources": true,
-      "shellcheckPath": "shellcheck",
-      "shfmt": {
-        "ignoreEditorconfig": true,
-        "languageDialect": "bash",
-        "path": "shfmt"
-      }
+    "env": {
+      "GLOB_PATTERN": "**/*@(.sh|.bash)",
+      "SHELLCHECK_ARGUMENTS": "--rcfile ${CLAUDE_PLUGIN_ROOT}/.shellcheckrc",
+      "SHELLCHECK_PATH": "shellcheck",
+      "SHFMT_IGNORE_EDITORCONFIG": "false",
+      "SHFMT_LANGUAGE_DIALECT": "auto",
+      "SHFMT_PATH": "shfmt"
     }
   }
 }
 ```
+
+The plugin passes these values through Claude Code's plugin environment, and
+bash-language-server 5.6.0 reads them at startup. The bundled `.shellcheckrc`
+already enables the intended optional ShellCheck checks, so the repo does not
+need a separate `shellcheckExternalSources` setting in the manifest.
 
 **.claude/settings.local.json** - Permissions:
 ```json
@@ -315,24 +313,21 @@ The bash-language-server supports additional configuration through `.lsp.json`. 
       ".sh": "bash",
       ".bash": "bash"
     },
-    "initializationOptions": {
-      "enableSourceErrorDiagnostics": true,
-      "globPattern": "**/*@(.sh|.inc|.bash)",
-      "shellcheckArguments": [
-        "--rcfile",
-        "${CLAUDE_PLUGIN_ROOT}/.shellcheckrc"
-      ],
-      "shellcheckExternalSources": true,
-      "shellcheckPath": "shellcheck",
-      "shfmt": {
-        "ignoreEditorconfig": true,
-        "languageDialect": "bash",
-        "path": "shfmt"
-      }
+    "env": {
+      "GLOB_PATTERN": "**/*@(.sh|.bash)",
+      "SHELLCHECK_ARGUMENTS": "--rcfile ${CLAUDE_PLUGIN_ROOT}/.shellcheckrc",
+      "SHELLCHECK_PATH": "shellcheck",
+      "SHFMT_IGNORE_EDITORCONFIG": "false",
+      "SHFMT_LANGUAGE_DIALECT": "auto",
+      "SHFMT_PATH": "shfmt"
     }
   }
 }
 ```
+
+This repo keeps the runtime policy in the plugin environment rather than in
+`initializationOptions`, because bash-language-server 5.6.0 reads these values
+from process environment at startup.
 
 ## Related Resources
 
