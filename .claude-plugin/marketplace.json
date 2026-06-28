@@ -1,0 +1,14 @@
+{
+  "name": "bash-lsp-plugin-marketplace",
+  "owner": {
+    "name": "arbal"
+  },
+  "description": "Marketplace for the bash-lsp-plugin Claude Code release candidate",
+  "plugins": [
+    {
+      "name": "bash-lsp-plugin",
+      "source": "./",
+      "description": "Claude Code Bash/Shell LSP integration with ShellCheck linting and shfmt formatting"
+    }
+  ]
+}

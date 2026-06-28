@@ -14,8 +14,12 @@ brew install shellcheck  # or apt/pacman install shellcheck
 # 2. Load the plugin with Claude Code
 claude --plugin-dir /path/to/bash-lsp-plugin
 
+# Or add the marketplace and install it
+claude plugins marketplace add /path/to/bash-lsp-plugin
+claude plugins install bash-lsp-plugin@bash-lsp-plugin-marketplace
+
 # 3. Open a bash script
-# LSP will automatically provide diagnostics and code intelligence
+# LSP will provide diagnostics and navigation; formatting is available when the client requests it
 ```
 
 **See [Prerequisites](#prerequisites) for alternative installation methods.**
@@ -30,12 +34,16 @@ The bash-language-server provides intelligent code assistance for Bash scripts:
 - **Variable Tracking** - Detection of undefined or unused variables
 - **ShellCheck Integration** - Linting and best practice suggestions
 - **Hover Documentation** - Inline documentation for commands
-- **Code Formatting** - Automatic script formatting
+- **Code Formatting** - `shfmt` support when the LSP client requests document formatting
 - **Symbol Search** - Find functions and variables across files
 
 ## Supported File Extensions
 
 - `.sh` - Shell scripts
+- `.bash` - Bash scripts
+Files with `zsh` or `ksh` extensions are intentionally not claimed here, and
+hidden Bash startup files or `.command` files are not advertised in this
+release because Claude Code did not route them consistently in live tests.
 
 ## Prerequisites
 
@@ -111,12 +119,17 @@ Expected output: `ShellCheck - shell script analysis tool, version: 0.10.0` (or 
 ```
 bash-lsp-plugin/
 ├── plugin.json              # Plugin metadata
+├── .claude-plugin/
+│   └── marketplace.json     # Marketplace catalog
 ├── .lsp.json               # LSP server configuration
 ├── .shellcheckrc           # ShellCheck style configuration (optional)
 ├── .claude/
 │   └── settings.local.json # Permission settings
+├── scripts/
+│   └── validate.sh         # Local validation entry point
 ├── README.md               # This file
 ├── CONFIGURATION.md        # Style and configuration guide
+├── RELEASING.md            # Release workflow and approval gate
 └── TROUBLESHOOTING.md      # Debug and troubleshooting guide
 ```
 
@@ -138,8 +151,9 @@ See **[CONFIGURATION.md](CONFIGURATION.md)** for details on customizing ShellChe
 ```json
 {
   "name": "bash-lsp-plugin",
-  "description": "An LSP plugin using bash-lsp/bash-language-server",
-  "version": "1.0.0",
+  "displayName": "Bash LSP Plugin",
+  "description": "Claude Code Bash/Shell LSP integration with ShellCheck linting and shfmt formatting",
+  "version": "1.1.0",
   "author": {
     "name": "arbal"
   }
@@ -153,11 +167,25 @@ See **[CONFIGURATION.md](CONFIGURATION.md)** for details on customizing ShellChe
     "command": "bash-language-server",
     "args": ["start"],
     "extensionToLanguage": {
-      ".sh": "bash"
+      ".sh": "bash",
+      ".bash": "bash"
+    },
+    "env": {
+      "GLOB_PATTERN": "**/*@(.sh|.bash)",
+      "SHELLCHECK_ARGUMENTS": "--rcfile ${CLAUDE_PLUGIN_ROOT}/.shellcheckrc",
+      "SHELLCHECK_PATH": "shellcheck",
+      "SHFMT_IGNORE_EDITORCONFIG": "false",
+      "SHFMT_LANGUAGE_DIALECT": "auto",
+      "SHFMT_PATH": "shfmt"
     }
   }
 }
 ```
+
+The plugin passes these values through Claude Code's plugin environment, and
+bash-language-server 5.6.0 reads them at startup. The bundled `.shellcheckrc`
+already enables the intended optional ShellCheck checks, so the repo does not
+need a separate `shellcheckExternalSources` setting in the manifest.
 
 **.claude/settings.local.json** - Permissions:
 ```json
@@ -177,27 +205,29 @@ The plugin includes comprehensive test files to verify LSP functionality:
 - **test.sh** - Comprehensive test covering all major bash features
 - **test-errors.sh** - Intentional syntax errors to test error detection
 - **test-advanced.sh** - Advanced bash features and edge cases
+- **demo-live.sh** - Warning-focused examples that stay non-destructive
+- **demo-issues.sh** - Warning-focused examples with harmless command output
 
 ### Running Tests
 
-1. Open any `.sh` file in Claude Code
-2. The LSP should automatically start and provide diagnostics
-3. Look for real-time syntax checking, completions, and suggestions
+1. Run `scripts/validate.sh`
+2. Open any supported shell file in Claude Code
+3. The LSP should start and provide diagnostics and navigation; formatting is available when requested by the client
 
 ### Expected LSP Diagnostics
 
 When working with the test files, you should see:
 
 - ✅ Unused variable warnings (shellcheck SC2034)
-- ✅ Suggestions for modern syntax (shellcheck SC2006, SC2219)
-- ✅ Best practice recommendations (shellcheck SC2012)
+- ✅ Suggestions for modern syntax such as `$(...)` and `command -v`
+- ✅ Best practice recommendations from the bundled `.shellcheckrc`
 - ✅ Syntax error detection in test-errors.sh
 
 ## Usage
 
 Once the plugin is loaded in Claude Code:
 
-1. **Open or create a `.sh` file**
+1. **Open or create a supported shell file**
 2. **Start typing** - Code completion will appear automatically
 3. **Hover over commands** - See documentation
 4. **Review diagnostics** - Syntax errors and warnings appear inline
@@ -230,7 +260,7 @@ DATE=`date`  # LSP suggests: Use $(date) instead of backticks
 
 1. **Check installation:**
    ```bash
-   which bash-language-server
+   command -v bash-language-server
    ```
 
 2. **Verify permissions in `.claude/settings.local.json`:**
@@ -281,16 +311,23 @@ The bash-language-server supports additional configuration through `.lsp.json`. 
     "args": ["start"],
     "extensionToLanguage": {
       ".sh": "bash",
-      ".bash": "bash",
-      ".zsh": "bash"
+      ".bash": "bash"
     },
-    "initializationOptions": {
-      "shellcheckPath": "/usr/bin/shellcheck",
-      "explainshellEndpoint": "https://explainshell.com"
+    "env": {
+      "GLOB_PATTERN": "**/*@(.sh|.bash)",
+      "SHELLCHECK_ARGUMENTS": "--rcfile ${CLAUDE_PLUGIN_ROOT}/.shellcheckrc",
+      "SHELLCHECK_PATH": "shellcheck",
+      "SHFMT_IGNORE_EDITORCONFIG": "false",
+      "SHFMT_LANGUAGE_DIALECT": "auto",
+      "SHFMT_PATH": "shfmt"
     }
   }
 }
 ```
+
+This repo keeps the runtime policy in the plugin environment rather than in
+`initializationOptions`, because bash-language-server 5.6.0 reads these values
+from process environment at startup.
 
 ## Related Resources
 
@@ -298,6 +335,7 @@ The bash-language-server supports additional configuration through `.lsp.json`. 
 - [ShellCheck](https://www.shellcheck.net/)
 - [LSP Specification](https://microsoft.github.io/language-server-protocol/)
 - [Claude Code Documentation](https://code.claude.com/docs)
+- [Release workflow](RELEASING.md)
 
 ## Version History
 
@@ -306,6 +344,12 @@ The bash-language-server supports additional configuration through `.lsp.json`. 
 - Support for `.sh` files
 - ShellCheck integration
 - Comprehensive test suite
+
+### 1.1.0 (2026-06-26)
+- Portable PATH-based LSP configuration
+- Bundled marketplace metadata for same-repo installation
+- Explicit ShellCheck rcfile wiring and shfmt settings
+- Updated fixtures, validation, and troubleshooting guidance
 
 ## License
 

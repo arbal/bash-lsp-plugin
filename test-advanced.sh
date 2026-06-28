@@ -1,5 +1,5 @@
 #!/bin/bash
-# Advanced bash features test for LSP
+# Fixture for advanced but valid Bash syntax.
 
 set -euo pipefail
 
@@ -12,7 +12,7 @@ diff <(ls /tmp) <(ls /var/tmp) || true
 
 # Feed command output as file
 while read -r line; do
-    echo "Line: $line"
+	echo "Line: $line"
 done < <(find . -name "*.sh")
 
 #==============================================================================
@@ -55,18 +55,18 @@ echo "Slice: ${array[@]:1:3}"
 
 # Array iteration
 for item in "${array[@]}"; do
-    echo "Item: $item"
+	echo "Item: $item"
 done
 
 # Associative array iteration
 declare -A config=(
-    [host]="localhost"
-    [port]="8080"
-    [protocol]="https"
+	[host]="localhost"
+	[port]="8080"
+	[protocol]="https"
 )
 
 for key in "${!config[@]}"; do
-    echo "$key = ${config[$key]}"
+	echo "$key = ${config[$key]}"
 done
 
 #==============================================================================
@@ -75,15 +75,15 @@ done
 
 # Redirect stdout and stderr separately
 {
-    echo "stdout"
-    echo "stderr" >&2
-} > /tmp/out.log 2> /tmp/err.log
+	echo "stdout"
+	echo "stderr" >&2
+} >/tmp/out.log 2>/tmp/err.log
 
 # Redirect stderr to stdout
 command 2>&1
 
 # Suppress all output
-command &> /dev/null
+command &>/dev/null
 
 # Tee to file and stdout
 echo "test" | tee /tmp/test.log
@@ -94,17 +94,17 @@ echo "test" | tee /tmp/test.log
 
 # Subshell (runs in separate process)
 (
-    cd /tmp
-    pwd
+	cd /tmp
+	pwd
 )
-pwd  # Still in original directory
+pwd # Still in original directory
 
 # Command group (runs in current shell)
 {
-    VAR="value"
-    echo "$VAR"
+	VAR="value"
+	echo "$VAR"
 }
-echo "$VAR"  # Variable still accessible
+echo "$VAR" # Variable still accessible
 
 #==============================================================================
 # COPROCESSES (bash 4+)
@@ -121,7 +121,7 @@ read -r output <&"${CAT_PROC[0]}"
 echo "Got: $output"
 
 # Close coprocess
-exec {CAT_PROC[1]}>&-
+exec {CAT_PROC[1]} >&-
 wait "$CAT_PROC_PID"
 
 #==============================================================================
@@ -145,17 +145,17 @@ wait "$CAT_PROC_PID"
 trap 'echo "Caught signal"; cleanup' INT TERM EXIT
 
 cleanup() {
-    echo "Cleanup function"
-    # Remove temp files, etc.
+	echo "Cleanup function"
+	# Remove temp files, etc.
 }
 
 # Trap with function
 trap cleanup_function ERR
 
 cleanup_function() {
-    local exit_code=$?
-    echo "Error occurred with exit code: $exit_code"
-    return "$exit_code"
+	local exit_code=$?
+	echo "Error occurred with exit code: $exit_code"
+	return "$exit_code"
 }
 
 #==============================================================================
@@ -171,10 +171,10 @@ wait "$bg_pid"
 
 # Check exit status
 if command_that_might_fail; then
-    echo "Success"
+	echo "Success"
 else
-    exit_code=$?
-    echo "Failed with code: $exit_code"
+	exit_code=$?
+	echo "Failed with code: $exit_code"
 fi
 
 #==============================================================================
@@ -185,7 +185,7 @@ fi
 read -t 5 -p "Enter something: " user_input || true
 
 # mapfile/readarray
-mapfile -t lines < test.sh
+mapfile -t lines <test.sh
 
 # printf formatting
 printf "%-10s %5d %8.2f\n" "Name" 42 3.14159

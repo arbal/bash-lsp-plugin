@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-06-26
+
+### Changed
+- Switched the LSP config to PATH-resolved `bash-language-server`, `shellcheck`, and `shfmt`
+- Added a same-repository marketplace manifest
+- Replaced the old release guide with `RELEASING.md`
+- Updated supported file routing and fixture classification
+
+### Added
+- `scripts/validate.sh` as a single local validation entry point
+
+### Fixed
+- Removed stale absolute paths and unsupported LSP configuration fields
+- Wired ShellCheck to the bundled `.shellcheckrc` through `--rcfile`
+- Moved Bash LSP runtime policy into `.lsp.json.env` so bash-language-server 5.6.0 receives ShellCheck and shfmt settings
+- Marked fixture/demo scripts and validation docs to avoid accidental destructive execution
+
 ## [1.0.0] - 2026-02-02
 
 ### Added

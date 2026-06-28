@@ -1,10 +1,10 @@
 {
   "name": "bash-lsp-plugin",
-  "version": "1.0.0",
-  "description": "LSP integration for Bash/Shell scripts with ShellCheck linting and custom style enforcement",
+  "version": "1.1.0",
+  "displayName": "Bash LSP Plugin",
+  "description": "Claude Code Bash/Shell LSP integration with ShellCheck linting and shfmt formatting",
   "author": {
-    "name": "arbal",
-    "email": "arbal@users.noreply.github.com"
+    "name": "arbal"
   },
   "homepage": "https://github.com/arbal/bash-lsp-plugin",
   "repository": "https://github.com/arbal/bash-lsp-plugin",

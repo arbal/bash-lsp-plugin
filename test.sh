@@ -1,6 +1,6 @@
 #!/bin/bash
-# Test script for bash LSP plugin
-# This file tests various bash-language-server features
+# Fixture for safe Bash syntax and navigation testing.
+# This file exercises valid bash-language-server features.
 
 set -euo pipefail
 
@@ -10,24 +10,24 @@ set -euo pipefail
 
 # Simple function
 greet() {
-    local name="$1"
-    echo "Hello, ${name}!"
+	local name="$1"
+	echo "Hello, ${name}!"
 }
 
 # Function with multiple parameters
 calculate_sum() {
-    local a="$1"
-    local b="$2"
-    echo $((a + b))
+	local a="$1"
+	local b="$2"
+	echo $((a + b))
 }
 
 # Function with return value
 check_status() {
-    if [[ -f "$1" ]]; then
-        return 0
-    else
-        return 1
-    fi
+	if [[ -f "$1" ]]; then
+		return 0
+	else
+		return 1
+	fi
 }
 
 #==============================================================================
@@ -73,7 +73,7 @@ FILE_COUNT=$(ls -1 | wc -l)
 HOSTNAME_VAR=$(hostname)
 
 # Backtick style (older syntax)
-DATE_VAR=`date +%Y-%m-%d`
+DATE_VAR=$(date +%Y-%m-%d)
 
 #==============================================================================
 # 5. CONDITIONALS (LSP should validate syntax)
@@ -81,34 +81,34 @@ DATE_VAR=`date +%Y-%m-%d`
 
 # File tests
 if [[ -f "test.sh" ]]; then
-    echo "File exists"
+	echo "File exists"
 elif [[ -d "/tmp" ]]; then
-    echo "Directory exists"
+	echo "Directory exists"
 else
-    echo "Nothing found"
+	echo "Nothing found"
 fi
 
 # String comparison
 if [[ "$MY_VAR" == "test" ]]; then
-    echo "String matches"
+	echo "String matches"
 fi
 
 # Numeric comparison
-if (( NUM_VAR > 10 )); then
-    echo "Number is greater than 10"
+if ((NUM_VAR > 10)); then
+	echo "Number is greater than 10"
 fi
 
 # Case statement
 case "$MY_VAR" in
-    test)
-        echo "Matched test"
-        ;;
-    prod)
-        echo "Matched prod"
-        ;;
-    *)
-        echo "No match"
-        ;;
+test)
+	echo "Matched test"
+	;;
+prod)
+	echo "Matched prod"
+	;;
+*)
+	echo "No match"
+	;;
 esac
 
 #==============================================================================
@@ -117,24 +117,24 @@ esac
 
 # For loop with range
 for i in {1..5}; do
-    echo "Number: $i"
+	echo "Number: $i"
 done
 
 # For loop with array
 for item in "${ARRAY_VAR[@]}"; do
-    echo "Item: $item"
+	echo "Item: $item"
 done
 
 # While loop
 counter=0
-while (( counter < 3 )); do
-    echo "Counter: $counter"
-    ((counter++))
+while ((counter < 3)); do
+	echo "Counter: $counter"
+	((counter++))
 done
 
 # C-style for loop
-for (( i=0; i<5; i++ )); do
-    echo "Index: $i"
+for ((i = 0; i < 5; i++)); do
+	echo "Index: $i"
 done
 
 #==============================================================================
@@ -161,9 +161,9 @@ echo "test" | grep "es"
 cat test.sh | grep "function" | wc -l
 
 # Redirections
-echo "output" > /tmp/test_output.txt
-echo "append" >> /tmp/test_output.txt
-cat < test.sh > /tmp/test_copy.txt 2>&1
+echo "output" >/tmp/test_output.txt
+echo "append" >>/tmp/test_output.txt
+cat <test.sh >/tmp/test_copy.txt 2>&1
 
 #==============================================================================
 # 9. FUNCTION CALLS (LSP should detect undefined functions)
@@ -182,7 +182,7 @@ trap 'echo "Error occurred"; exit 1' ERR
 
 # Command with error handling
 if ! some_command 2>/dev/null; then
-    echo "Command failed (expected)"
+	echo "Command failed (expected)"
 fi
 
 #==============================================================================
@@ -193,14 +193,14 @@ fi
 diff <(echo "line1") <(echo "line2") || true
 
 # Here document
-cat << EOF
+cat <<EOF
 This is a here document
 With multiple lines
 Variables: $MY_VAR
 EOF
 
 # Here string
-grep "test" <<< "test string"
+grep "test" <<<"test string"
 
 #==============================================================================
 # 12. INTENTIONAL ERRORS (LSP should flag these)

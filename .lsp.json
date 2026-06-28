@@ -4,22 +4,15 @@
     "args": ["start"],
     "extensionToLanguage": {
       ".sh": "bash",
-      ".bash": "bash",
-      ".bashrc": "bash",
-      ".bash_profile": "bash",
-      ".bash_login": "bash",
-      ".bash_logout": "bash",
-      ".profile": "bash",
-      ".zsh": "bash",
-      ".zshrc": "bash"
+      ".bash": "bash"
     },
-    "initializationOptions": {
-      "shellcheckPath": "/usr/bin/shellcheck",
-      "highlightParsingErrors": true
-    },
-    "startupTimeout": 5000,
-    "shutdownTimeout": 2000,
-    "restartOnCrash": true,
-    "maxRestarts": 3
+    "env": {
+      "GLOB_PATTERN": "**/*@(.sh|.bash)",
+      "SHELLCHECK_ARGUMENTS": "--rcfile ${CLAUDE_PLUGIN_ROOT}/.shellcheckrc",
+      "SHELLCHECK_PATH": "shellcheck",
+      "SHFMT_IGNORE_EDITORCONFIG": "false",
+      "SHFMT_LANGUAGE_DIALECT": "auto",
+      "SHFMT_PATH": "shfmt"
+    }
   }
 }

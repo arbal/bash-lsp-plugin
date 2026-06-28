@@ -1,0 +1,60 @@
+# Releasing
+
+Applies to: public GitHub release workflow for `bash-lsp-plugin`.
+
+## Release Goals
+
+- Keep the release candidate private until validation is complete.
+- Preserve local-only state and existing worktree changes.
+- Publish a marketplace-installable plugin on a release branch.
+- Do not push, tag, or create a GitHub release until explicitly approved.
+
+## Preflight
+
+1. Verify the repo path is `/path/to/bash-lsp-plugin`.
+2. Confirm the release branch is `release/v1.1.0`.
+3. Ensure the worktree is clean or every remaining path is explained.
+4. Run `scripts/validate.sh`.
+5. Re-check security and privacy findings.
+
+## Versioning
+
+- The plugin version lives in `.claude-plugin/plugin.json`.
+- The marketplace entry should reference the plugin root and avoid duplicating the version source.
+- The Bash LSP runtime policy lives in `.lsp.json.env`, which forwards the
+  bundled ShellCheck rcfile and shfmt policy into bash-language-server 5.6.0.
+- Bump to `1.1.0` only after all validation passes.
+
+## Local Validation
+
+- `claude plugin validate ./.claude-plugin/plugin.json --strict`
+- `claude plugin validate ./.claude-plugin/marketplace.json --strict`
+- `scripts/validate.sh`
+- `claude --plugin-dir /path/to/bash-lsp-plugin plugins details bash-lsp-plugin`
+- `git diff --check origin/main...HEAD`
+
+## Local Deployment
+
+1. Back up live Claude plugin metadata.
+2. Install or refresh the plugin from the local marketplace source.
+3. Verify the enabled plugin state.
+4. Keep the old `bash-lsp-plugin@user` state available until the replacement is proven.
+5. Record the rollback command before replacing anything.
+
+## CI Decision
+
+CI is deferred for this release candidate.
+
+- The repository's local validation path relies on the Claude Code CLI being available on the machine running the checks.
+- A reusable CI job would need a supported, non-secret bootstrap for that CLI or a narrower validation split that does not pretend to cover the full local release gate.
+- Until that path is standardized, the release process stays local-first and the repository documents the same `scripts/validate.sh` entry point for manual use.
+
+## Push Approval Gate
+
+The only approved push target for this release candidate is:
+
+```bash
+git -C /path/to/bash-lsp-plugin push -u origin release/v1.1.0
+```
+
+Do not run that command until the user explicitly approves it.

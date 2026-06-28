@@ -45,6 +45,11 @@ source-path=SCRIPTDIR:../lib
 
 **Format:** JSON configuration
 
+bash-language-server 5.6.0 reads its runtime policy from process environment
+variables. The Claude Code plugin forwards those values from `.lsp.json.env`,
+so the manifest keeps the server launch portable while still using the bundled
+ShellCheck rcfile and shfmt policy.
+
 #### Basic Configuration (Current)
 
 ```json
@@ -53,53 +58,40 @@ source-path=SCRIPTDIR:../lib
     "command": "bash-language-server",
     "args": ["start"],
     "extensionToLanguage": {
-      ".sh": "bash"
-    }
-  }
-}
-```
-
-#### Extended Configuration (With Style Options)
-
-```json
-{
-  "bash": {
-    "command": "bash-language-server",
-    "args": ["start"],
-    "extensionToLanguage": {
       ".sh": "bash",
-      ".bash": "bash",
-      ".bashrc": "bash",
-      ".bash_profile": "bash",
-      ".bash_logout": "bash"
+      ".bash": "bash"
     },
-    "initializationOptions": {
-      "shellcheckPath": "/usr/bin/shellcheck",
-      "shellcheckArguments": [
-        "--exclude=SC2034,SC2086",
-        "--shell=bash",
-        "--external-sources"
-      ],
-      "highlightParsingErrors": true,
-      "globPattern": "**/*@(.sh|.bash|.command)",
-      "explainshellEndpoint": ""
+    "env": {
+      "GLOB_PATTERN": "**/*@(.sh|.bash)",
+      "SHELLCHECK_ARGUMENTS": "--rcfile ${CLAUDE_PLUGIN_ROOT}/.shellcheckrc",
+      "SHELLCHECK_PATH": "shellcheck",
+      "SHFMT_IGNORE_EDITORCONFIG": "false",
+      "SHFMT_LANGUAGE_DIALECT": "auto",
+      "SHFMT_PATH": "shfmt"
     }
   }
 }
 ```
 
-**Available Options:**
+**Active Bash IDE Settings:**
 
-- **shellcheckPath** - Absolute path to shellcheck binary
-- **shellcheckArguments** - Array of arguments passed to shellcheck
-  - `--exclude=CODE1,CODE2` - Disable specific checks
-  - `--shell=bash|sh|dash|ksh` - Set shell dialect
-  - `--external-sources` - Follow sourced files
-  - `--source-path=DIR` - Where to look for sources
-  - `--severity=error|warning|info|style` - Minimum severity
-- **highlightParsingErrors** - Show syntax errors (default: true)
-- **globPattern** - File patterns to analyze
-- **explainshellEndpoint** - URL for shell command explanations (leave empty to disable)
+- **GLOB_PATTERN** - `**/*@(.sh|.bash)` for workspace background analysis only
+- **SHELLCHECK_ARGUMENTS** - `--rcfile ${CLAUDE_PLUGIN_ROOT}/.shellcheckrc`
+- **SHELLCHECK_PATH** - `shellcheck` resolved from `PATH`
+- **SHFMT_PATH** - `shfmt` resolved from `PATH`
+- **SHFMT_IGNORE_EDITORCONFIG** - `false`, so project `.editorconfig` remains
+  authoritative when shfmt runs
+- **SHFMT_LANGUAGE_DIALECT** - `auto`, so shfmt can choose the dialect from the
+  file context where supported
+
+**Behavior Notes:**
+
+- Bash language-server 5.6.0 adds `--external-sources` itself when ShellCheck
+  linting is enabled, so this repository does not duplicate that flag in the
+  manifest.
+- The bundled `.shellcheckrc` is the source of the optional policy checks.
+- Claude Code diagnostics and navigation are claimed only for `.sh` and
+  `.bash` files in this release.
 
 ### 3. Per-File Directives
 
@@ -179,7 +171,7 @@ ShellCheck checks these locations in order (first found wins):
 4. **Home directory** (`~/.shellcheckrc`)
 5. **XDG config** (`$XDG_CONFIG_HOME/shellcheck/shellcheckrc`)
 
-bash-language-server respects this priority automatically.
+bash-language-server respects this priority automatically unless you pass an explicit `--rcfile` in `.lsp.json`, which makes the bundled plugin rcfile win.
 
 ## Common Configuration Patterns
 
@@ -233,12 +225,8 @@ source-path=SCRIPTDIR:./lib:../common
     "extensionToLanguage": {
       ".sh": "bash"
     },
-    "initializationOptions": {
-      "shellcheckArguments": [
-        "--severity=error",
-        "--shell=bash",
-        "--norc"
-      ]
+    "env": {
+      "SHELLCHECK_ARGUMENTS": "--severity=error --shell=bash --norc"
     }
   }
 }
@@ -254,17 +242,18 @@ cd ~/bash-lsp-plugin
 shellcheck demo-live.sh
 
 # Check which config file is used
-shellcheck --version  # Shows config search paths
+shellcheck --help | sed -n '1,80p'
 ```
 
 ### Verify LSP Integration
 
 ```bash
-# Start Claude Code in debug mode
-claude --debug --plugin-dir ~/bash-lsp-plugin
+# Validate the plugin and marketplace manifests
+claude plugin validate ./.claude-plugin/plugin.json --strict
+claude plugin validate ./.claude-plugin/marketplace.json --strict
 
-# Check debug log for initialization options
-grep "initializationOptions" ~/.claude/debug/latest
+# Inspect the loaded plugin
+claude --plugin-dir ~/bash-lsp-plugin plugins details bash-lsp-plugin
 ```
 
 ### Test Specific Rules

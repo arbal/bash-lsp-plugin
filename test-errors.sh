@@ -1,6 +1,6 @@
 #!/bin/bash
-# Test file with intentional syntax errors
-# The LSP should flag all of these
+# Intentional syntax-error fixture.
+# Do not execute this file.
 
 # 1. Unclosed quote
 echo "This quote is not closed
